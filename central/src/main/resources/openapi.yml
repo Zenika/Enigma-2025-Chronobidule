@@ -1,0 +1,89 @@
+openapi: 3.0.3
+info:
+  title: Chronobidule
+  version: 1.0.0
+tags:
+  - name: Stores
+    description: Provides endpoints to manage stores.
+paths:
+  /central/stores:
+    get:
+      tags:
+        - Stores
+      summary: Gets all the stores referenced by Chronobidule
+      operationId: getStores
+      responses:
+        '200':
+          $ref: '#/components/responses/Stores'
+    post:
+      tags:
+        - Stores
+      summary: Registers a new store in Chronobidule
+      operationId: registerStore
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterStore'
+      responses:
+        '201':
+          $ref: '#/components/responses/RegisteredStore'
+components:
+  requestBodies:
+    RegisterStore:
+      required: true
+      description: The content to register a new store
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                description: The store name.
+                type: string
+                example: new store
+  responses:
+    Stores:
+      description: The registered stores.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Stores'
+    RegisteredStore:
+      description: The registered store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Store'
+          examples:
+            registeredStore:
+              $ref: '#/components/examples/RegisteredStore'
+  schemas:
+    Stores:
+      type: object
+      required:
+        - stores
+      properties:
+        stores:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/Store'
+    Store:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: The store ID.
+          type: number
+          example: 123
+        name:
+          description: The store name.
+          type: string
+          example: store 1
+  examples:
+    RegisteredStore:
+      value:
+        id: 456
+        name: new store
