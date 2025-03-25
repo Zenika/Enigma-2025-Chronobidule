@@ -1,4 +1,4 @@
-package com.zenika.enigma.chronobidule.stores;
+package com.zenika.enigma.chronobidule.central.stores;
 
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;

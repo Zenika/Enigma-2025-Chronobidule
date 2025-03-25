@@ -1,4 +1,4 @@
-package com.zenika.enigma.chronobidule;
+package com.zenika.enigma.chronobidule.central;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

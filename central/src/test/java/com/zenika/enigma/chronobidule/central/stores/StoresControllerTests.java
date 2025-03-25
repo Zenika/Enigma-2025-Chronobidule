@@ -1,5 +1,8 @@
-package com.zenika.enigma.chronobidule.stores;
+package com.zenika.enigma.chronobidule.central.stores;
 
+import com.zenika.enigma.chronobidule.central.stores.Store;
+import com.zenika.enigma.chronobidule.central.stores.StoresController;
+import com.zenika.enigma.chronobidule.central.stores.StoresService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

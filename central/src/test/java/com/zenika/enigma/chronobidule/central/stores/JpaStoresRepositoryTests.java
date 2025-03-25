@@ -1,5 +1,7 @@
-package com.zenika.enigma.chronobidule.stores;
+package com.zenika.enigma.chronobidule.central.stores;
 
+import com.zenika.enigma.chronobidule.central.stores.Store;
+import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

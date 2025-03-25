@@ -1,4 +1,4 @@
-package com.zenika.enigma.chronobidule.stores;
+package com.zenika.enigma.chronobidule.central.stores;
 
 import java.util.Collection;
 
