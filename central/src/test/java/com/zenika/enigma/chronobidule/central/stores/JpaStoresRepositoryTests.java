@@ -1,22 +1,29 @@
 package com.zenika.enigma.chronobidule.central.stores;
 
-import com.zenika.enigma.chronobidule.central.stores.Store;
-import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
-@DataJpaTest(properties = {
-        "spring.datasource.url=jdbc:h2:mem:testdb",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
-})
+@Testcontainers
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = NONE)
 @DisplayName("JPA stores repository should")
 class JpaStoresRepositoryTests {
+
+    @Container
+    private static PostgreSQLContainer<?> DB_CONTAINER = new PostgreSQLContainer<>("postgres:17.4-alpine");
 
     @Autowired
     private TestEntityManager entityManager;
@@ -45,6 +52,13 @@ class JpaStoresRepositoryTests {
         var actual = repository.save(new Store(null, "new store"));
         assertThat(actual.getName()).isEqualTo("new store");
         assertThat(repository.findAll()).contains(actual);
+    }
+
+    @DynamicPropertySource
+    static void dynamicDatasourceProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", DB_CONTAINER::getJdbcUrl);
+        registry.add("spring.datasource.username", DB_CONTAINER::getUsername);
+        registry.add("spring.datasource.password", DB_CONTAINER::getPassword);
     }
 
 }
