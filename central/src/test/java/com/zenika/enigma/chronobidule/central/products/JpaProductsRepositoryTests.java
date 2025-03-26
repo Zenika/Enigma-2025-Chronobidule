@@ -1,4 +1,4 @@
-package com.zenika.enigma.chronobidule.central.stores;
+package com.zenika.enigma.chronobidule.central.products;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,8 +19,8 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
 @Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = NONE)
-@DisplayName("JPA stores repository should")
-class JpaStoresRepositoryTests {
+@DisplayName("JPA products repository should")
+class JpaProductsRepositoryTests {
 
     @Container
     private static PostgreSQLContainer<?> DB_CONTAINER = new PostgreSQLContainer<>("postgres:17.4-alpine");
@@ -28,37 +28,39 @@ class JpaStoresRepositoryTests {
     @Autowired
     private TestEntityManager entityManager;
     @Autowired
-    private StoresRepository repository;
+    private ProductsRepository repository;
 
     @BeforeEach
     void setUp() {
-        entityManager.persist(new Store(null, "store 1"));
-        entityManager.persist(new Store(null, "store 2"));
+        entityManager.persist(new Product(null, "product 1"));
+        entityManager.persist(new Product(null, "product 2"));
     }
 
     @Test
-    @DisplayName("provide stores saved in database")
-    void existingStores() {
+    @DisplayName("provide products saved in database")
+    void existingProducts() {
         var actual = repository.findAll();
         assertThat(actual).containsExactlyInAnyOrder(
-                new Store(1L, "store 1"),
-                new Store(2L, "store 2")
+                new Product(1L, "product 1"),
+                new Product(2L, "product 2")
         );
     }
 
     @Test
-    @DisplayName("not find store for unknown name")
-    void unknownStoreName() {
-        var actual = repository.findByName("unknown");
+    @DisplayName("not find product for unknown id")
+    void unknownProductId() {
+        var actual = repository.findById(1000L);
         assertThat(actual).isEmpty();
     }
 
     @Test
     @DisplayName("find store after saving it")
     void saveStore() {
-        var actual = repository.save(new Store(null, "new store"));
-        assertThat(actual.getName()).isEqualTo("new store");
-        assertThat(repository.findByName("new store")).contains(actual);
+        var actual = repository.save(new Product(null, "new product"));
+        assertThat(actual.getName()).isEqualTo("new product");
+        var found = repository.findById(actual.getId());
+        assertThat(found).contains(actual);
+        assertThat(found.get().getName()).isEqualTo("new product");
     }
 
     @DynamicPropertySource
