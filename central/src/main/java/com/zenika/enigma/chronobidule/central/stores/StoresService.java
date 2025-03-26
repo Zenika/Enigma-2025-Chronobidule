@@ -2,6 +2,7 @@ package com.zenika.enigma.chronobidule.central.stores;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -15,9 +16,11 @@ public class StoresService {
     private static final Logger LOGGER = LoggerFactory.getLogger(StoresService.class);
 
     private final StoresRepository repository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    StoresService(StoresRepository repository) {
+    StoresService(StoresRepository repository, ApplicationEventPublisher eventPublisher) {
         this.repository = repository;
+        this.eventPublisher = eventPublisher;
     }
 
     public Collection<Store> getStores() {
@@ -32,7 +35,9 @@ public class StoresService {
             return knownStore.get();
         }
         LOGGER.info("Create store {}", store.getName());
-        return repository.save(store);
+        var registeredStore = repository.save(store);
+        eventPublisher.publishEvent(new StoreRegistered(registeredStore));
+        return registeredStore;
     }
 
 }

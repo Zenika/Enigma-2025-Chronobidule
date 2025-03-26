@@ -5,20 +5,34 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
+@ExtendWith(MockitoExtension.class)
 @DisplayName("Stores service should")
 class StoresServiceTests {
 
     private StoresRepository repository;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
     private StoresService service;
+
+    @Captor
+    private ArgumentCaptor<StoreRegistered> storeRegisteredCaptor;
 
     @BeforeEach
     void setUp() {
         repository = new InMemoryStoresRepository();
-        service = new StoresService(repository);
+        service = new StoresService(repository, eventPublisher);
     }
 
     @Test
@@ -68,6 +82,8 @@ class StoresServiceTests {
                 s.assertThat(actual).isNotNull();
                 s.assertThat(service.getStores()).contains(actual);
             });
+            verify(eventPublisher).publishEvent(storeRegisteredCaptor.capture());
+            assertThat(storeRegisteredCaptor.getValue().store()).isEqualTo(actual);
         }
 
         @Test
@@ -81,6 +97,7 @@ class StoresServiceTests {
                 s.assertThat(actual.getId()).isEqualTo(987L);
                 s.assertThat(service.getStores()).contains(store);
             });
+            verifyNoInteractions(eventPublisher);
         }
 
     }
