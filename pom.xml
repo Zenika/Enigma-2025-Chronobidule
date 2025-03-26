@@ -16,5 +16,6 @@
 	<description>Le SI de Chronobidule</description>
 	<modules>
 		<module>central</module>
+		<module>store</module>
 	</modules>
 </project>

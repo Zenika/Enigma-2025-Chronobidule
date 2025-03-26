@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Stores service should")
 class StoresServiceTests {
@@ -48,12 +49,37 @@ class StoresServiceTests {
         }
 
         @Test
+        @DisplayName("fail creating store with null name")
+        void createStoreNullName() {
+            assertThrows(IllegalArgumentException.class, () -> Store.of(null));
+        }
+
+        @Test
+        @DisplayName("fail creating null store")
+        void createNullStore() {
+            assertThrows(IllegalArgumentException.class, () -> service.createStore(null));
+        }
+
+        @Test
         @DisplayName("retrieve store after creation")
         void createStore() {
             var actual = service.createStore(new Store(789L, "new store"));
             SoftAssertions.assertSoftly(s -> {
                 s.assertThat(actual).isNotNull();
                 s.assertThat(service.getStores()).contains(actual);
+            });
+        }
+
+        @Test
+        @DisplayName("retrieve already existing store")
+        void createExistingStore() {
+            var store = new Store(987L, "existing store");
+            repository.save(store);
+
+            var actual = service.createStore(new Store(654L, "existing store"));
+            SoftAssertions.assertSoftly(s -> {
+                s.assertThat(actual.getId()).isEqualTo(987L);
+                s.assertThat(service.getStores()).contains(store);
             });
         }
 

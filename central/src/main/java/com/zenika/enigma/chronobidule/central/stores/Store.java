@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import org.springframework.util.Assert;
 
 import java.util.Objects;
 
@@ -21,6 +22,7 @@ public class Store {
     private String name;
 
     public static Store of(String name) {
+        Assert.notNull(name, "Invalid store name");
         return new Store(null, name);
     }
 

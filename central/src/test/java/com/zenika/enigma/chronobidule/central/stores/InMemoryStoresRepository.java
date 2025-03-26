@@ -1,11 +1,11 @@
 package com.zenika.enigma.chronobidule.central.stores;
 
-import com.zenika.enigma.chronobidule.central.stores.Store;
-import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
+import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 class InMemoryStoresRepository implements StoresRepository {
     private Map<Long, Store> stores = new HashMap<>();
@@ -13,6 +13,14 @@ class InMemoryStoresRepository implements StoresRepository {
     @Override
     public Collection<Store> findAll() {
         return stores.values();
+    }
+
+    @Override
+    public Optional<Store> findByName(String name) {
+        Assert.notNull(name, "Cannot find store with null name");
+        return findAll().stream()
+                .filter(store -> store.getName().equals(name))
+                .findFirst();
     }
 
     @Override
