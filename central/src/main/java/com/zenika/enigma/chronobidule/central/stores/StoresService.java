@@ -34,7 +34,7 @@ public class StoresService {
             LOGGER.info("Ignoring store {} creation", store.getName());
             return knownStore.get();
         }
-        LOGGER.info("Create store {}", store.getName());
+        LOGGER.info("Create store {}, accessible at {}", store.getName(), store.getBaseUrl());
         var registeredStore = repository.save(store);
         eventPublisher.publishEvent(new StoreRegistered(registeredStore));
         return registeredStore;

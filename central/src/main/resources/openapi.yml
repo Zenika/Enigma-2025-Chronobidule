@@ -41,6 +41,10 @@ components:
                 description: The store name.
                 type: string
                 example: new store
+              baseUrl:
+                description: The base URL to interact with the store API.
+                type: string
+                example: http://my-host:8080/my-api-base-url
   responses:
     Stores:
       description: The registered stores.

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
@@ -32,7 +34,7 @@ class StockInitializerTests {
     @Test
     @DisplayName("initialize stock for store after registration")
     void initializeStockForStore() {
-        var store = new Store(123L, "test store");
+        var store = new Store(123L, "test store", URI.create("http://host/test"));
         assumeThat(stockRepository.findByStoreId(123L)).isEmpty();
         stockInitializer.onStoreRegistered(new StoreRegistered(store));
         assertThat(stockRepository.findByStoreId(123L)).isNotEmpty().allMatch(

@@ -17,6 +17,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.net.URI;
+
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,8 +46,8 @@ class JpaStockRepositoryTests {
 
     @BeforeEach
     void setUp() {
-        store1 = entityManager.persist(new Store(null, "store 1"));
-        store2 = entityManager.persist(new Store(null, "store 2"));
+        store1 = entityManager.persist(new Store(null, "store 1", URI.create("http://host1/api")));
+        store2 = entityManager.persist(new Store(null, "store 2", URI.create("http://host2/api")));
         product1 = entityManager.persist(new Product(null, "product 1"));
         product2 = entityManager.persist(new Product(null, "product 2"));
         product3 = entityManager.persist(new Product(null, "product 3"));

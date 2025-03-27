@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import org.springframework.util.Assert;
 
+import java.net.URI;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
@@ -20,18 +21,21 @@ public class Store {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
+    private URI baseUrl;
 
-    public static Store of(String name) {
+    public static Store of(String name, URI baseUrl) {
         Assert.notNull(name, "Invalid store name");
-        return new Store(null, name);
+        Assert.notNull(baseUrl, "Invalid store base URL");
+        return new Store(null, name, baseUrl);
     }
 
     private Store() {
     }
 
-    public Store(Long id, String name) {
+    public Store(Long id, String name, URI baseUrl) {
         this.id = id;
         this.name = name;
+        this.baseUrl = baseUrl;
     }
 
     public Long getId() {
@@ -42,16 +46,20 @@ public class Store {
         return name;
     }
 
+    public URI getBaseUrl() {
+        return baseUrl;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Store store = (Store) o;
-        return Objects.equals(id, store.id) && Objects.equals(name, store.name);
+        return Objects.equals(id, store.id) && Objects.equals(name, store.name) && Objects.equals(baseUrl, store.baseUrl);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, baseUrl);
     }
 
     @Override
@@ -59,6 +67,7 @@ public class Store {
         return "Store{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", baseUrl='" + baseUrl + '\'' +
                 '}';
     }
 }

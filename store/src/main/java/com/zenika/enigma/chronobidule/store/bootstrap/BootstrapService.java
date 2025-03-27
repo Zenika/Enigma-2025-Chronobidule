@@ -28,7 +28,7 @@ public class BootstrapService {
         var registration = restClient.post()
                 .uri("/central/stores")
                 .body("""
-                        {"name": "test store"}
+                        {"name": "test store", "baseUrl": "http://localhost:9090"}
                         """)
                 .contentType(MediaType.APPLICATION_JSON)
                 .retrieve()
