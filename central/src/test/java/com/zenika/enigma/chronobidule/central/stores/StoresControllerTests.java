@@ -9,7 +9,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -43,8 +42,8 @@ class StoresControllerTests {
     @DisplayName("return list of stores with existing stores")
     void storesListWithExisting() throws Exception {
         when(service.getStores()).thenReturn(List.of(
-                new Store(123L, "store 1", URI.create("http://host1/api")),
-                new Store(456L, "store 2", URI.create("http://host2/api"))
+                new Store(123L, "store 1", "http://host1/api"),
+                new Store(456L, "store 2", "http://host2/api")
         ));
 
         mvc.perform(get("/central/stores"))
@@ -60,7 +59,7 @@ class StoresControllerTests {
     @DisplayName("save and return created store")
     void createStore() throws Exception {
         when(service.createStore(any())).thenReturn(
-                new Store(789L, "new store", URI.create("http://host/new_store"))
+                new Store(789L, "new store", "http://host/new_store")
         );
 
         mvc.perform(post("/central/stores")
@@ -72,7 +71,7 @@ class StoresControllerTests {
                 .andExpect(jsonPath("id", equalTo(789)))
                 .andExpect(jsonPath("name", equalTo("new store")));
 
-        verify(service).createStore(eq(new Store(null, "new store", URI.create("http://host/new_store"))));
+        verify(service).createStore(eq(new Store(null, "new store", "http://host/new_store")));
     }
 
     @ParameterizedTest

@@ -6,7 +6,6 @@ import org.hibernate.validator.constraints.URL;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.Collection;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -26,21 +25,31 @@ public class StoresController {
     @GetMapping
     StoresListResponse getStores() {
         var stores = service.getStores();
-        return new StoresListResponse(stores);
+        return StoresListResponse.from(stores);
     }
 
     @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @ResponseStatus(CREATED)
-    Store createStore(@RequestBody @Valid CreateStoreRequest request) {
-        return service.createStore(request.toModel());
+    StoreDto createStore(@RequestBody @Valid CreateStoreRequest request) {
+        var store = service.createStore(request.toModel());
+        return StoreDto.from(store);
     }
 
-    record StoresListResponse(Collection<Store> stores) {
+    record StoresListResponse(Collection<StoreDto> stores) {
+        static StoresListResponse from(Collection<Store> stores) {
+            return new StoresListResponse(stores.stream().map(StoreDto::from).toList());
+        }
     }
 
     record CreateStoreRequest(@NotBlank String name, @NotBlank @URL String baseUrl) {
-        public Store toModel() {
-            return Store.of(name, URI.create(baseUrl));
+        Store toModel() {
+            return Store.of(name, baseUrl);
+        }
+    }
+
+    record StoreDto(long id, String name) {
+        static StoreDto from(Store store) {
+            return new StoreDto(store.getId(), store.getName());
         }
     }
 

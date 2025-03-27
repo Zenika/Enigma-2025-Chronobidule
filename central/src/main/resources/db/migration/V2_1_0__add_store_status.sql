@@ -1,0 +1,8 @@
+ALTER TABLE stores
+ADD COLUMN status VARCHAR(20);
+
+UPDATE stores
+SET status = 'STOCK_INITIALIZED';
+
+ALTER TABLE stores
+ALTER COLUMN status SET NOT NULL;

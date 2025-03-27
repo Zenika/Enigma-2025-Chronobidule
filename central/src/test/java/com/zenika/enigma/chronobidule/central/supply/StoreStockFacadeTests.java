@@ -11,7 +11,6 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
 import java.util.List;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -38,7 +37,7 @@ class StoreStockFacadeTests {
     @Test
     @DisplayName("send stock to the store successfully")
     void sendStock() throws Exception {
-        var store = new Store(123L, "test store", URI.create("http://test-store.chronobidule.com/api"));
+        var store = new Store(123L, "test store", "http://test-store.chronobidule.com/api");
         var stock = List.of(
                 StoreStockEntry.of(store, new Product(111L, "product 1"), 100),
                 StoreStockEntry.of(store, new Product(222L, "product 2"), 200),

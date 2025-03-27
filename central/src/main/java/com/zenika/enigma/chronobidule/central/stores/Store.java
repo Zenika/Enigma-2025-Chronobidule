@@ -1,16 +1,14 @@
 package com.zenika.enigma.chronobidule.central.stores;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
-import java.net.URI;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
+import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.REGISTERED;
+import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.STOCK_INITIALIZED;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -21,21 +19,36 @@ public class Store {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String name;
-    private URI baseUrl;
+    private String baseUrl;
+    @Enumerated(EnumType.STRING)
+    private StoreStatus status;
 
-    public static Store of(String name, URI baseUrl) {
+    public static Store of(String name, String baseUrl) {
         Assert.notNull(name, "Invalid store name");
         Assert.notNull(baseUrl, "Invalid store base URL");
-        return new Store(null, name, baseUrl);
+        return new Store(null, name, baseUrl, REGISTERED);
     }
 
     private Store() {
     }
 
-    public Store(Long id, String name, URI baseUrl) {
+    public Store(Long id, String name, String baseUrl) {
+        this(id, name, baseUrl, REGISTERED);
+    }
+
+    public Store(Long id, String name, String baseUrl, StoreStatus status) {
         this.id = id;
         this.name = name;
         this.baseUrl = baseUrl;
+        this.status = status;
+    }
+
+    public Store stockInitialized() {
+        if (!status.equals(REGISTERED)) {
+            throw new IllegalStateException("Cannot move to stock initialized, current status is " + status);
+        }
+        status = STOCK_INITIALIZED;
+        return this;
     }
 
     public Long getId() {
@@ -46,20 +59,24 @@ public class Store {
         return name;
     }
 
-    public URI getBaseUrl() {
+    public String getBaseUrl() {
         return baseUrl;
+    }
+
+    public StoreStatus getStatus() {
+        return status;
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Store store = (Store) o;
-        return Objects.equals(id, store.id) && Objects.equals(name, store.name) && Objects.equals(baseUrl, store.baseUrl);
+        return Objects.equals(id, store.id) && Objects.equals(name, store.name) && Objects.equals(baseUrl, store.baseUrl) && status == store.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, baseUrl);
+        return Objects.hash(id, name, baseUrl, status);
     }
 
     @Override
@@ -67,7 +84,8 @@ public class Store {
         return "Store{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", baseUrl='" + baseUrl + '\'' +
+                ", baseUrl=" + baseUrl +
+                ", status=" + status +
                 '}';
     }
 }

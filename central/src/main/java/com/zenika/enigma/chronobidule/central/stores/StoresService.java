@@ -30,12 +30,14 @@ public class StoresService {
     public Store createStore(Store store) {
         Assert.notNull(store, "Cannot create null store");
         var knownStore = repository.findByName(store.getName());
+        Store registeredStore;
         if (knownStore.isPresent()) {
             LOGGER.info("Ignoring store {} creation", store.getName());
-            return knownStore.get();
+            registeredStore = knownStore.get();
+        } else {
+            LOGGER.info("Create store {}, accessible at {}", store.getName(), store.getBaseUrl());
+            registeredStore = repository.save(store);
         }
-        LOGGER.info("Create store {}, accessible at {}", store.getName(), store.getBaseUrl());
-        var registeredStore = repository.save(store);
         eventPublisher.publishEvent(new StoreRegistered(registeredStore));
         return registeredStore;
     }

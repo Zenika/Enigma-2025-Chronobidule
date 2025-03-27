@@ -3,7 +3,7 @@ package com.zenika.enigma.chronobidule.central.stores;
 import java.util.Collection;
 import java.util.Optional;
 
-interface StoresRepository {
+public interface StoresRepository {
 
     Collection<Store> findAll();
 

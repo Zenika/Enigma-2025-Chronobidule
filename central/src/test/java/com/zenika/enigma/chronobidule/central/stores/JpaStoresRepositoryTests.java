@@ -13,8 +13,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.net.URI;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
@@ -34,8 +32,8 @@ class JpaStoresRepositoryTests {
 
     @BeforeEach
     void setUp() {
-        entityManager.persist(new Store(null, "store 1", URI.create("http://host1/api")));
-        entityManager.persist(new Store(null, "store 2", URI.create("http://host2/api")));
+        entityManager.persist(new Store(null, "store 1", "http://host1/api"));
+        entityManager.persist(new Store(null, "store 2", "http://host2/api"));
     }
 
     @Test
@@ -43,8 +41,8 @@ class JpaStoresRepositoryTests {
     void existingStores() {
         var actual = repository.findAll();
         assertThat(actual).containsExactlyInAnyOrder(
-                new Store(1L, "store 1", URI.create("http://host1/api")),
-                new Store(2L, "store 2", URI.create("http://host2/api"))
+                new Store(1L, "store 1", "http://host1/api"),
+                new Store(2L, "store 2", "http://host2/api")
         );
     }
 
@@ -58,7 +56,7 @@ class JpaStoresRepositoryTests {
     @Test
     @DisplayName("find store after saving it")
     void saveStore() {
-        var actual = repository.save(new Store(null, "new store", URI.create("http://host/new_store")));
+        var actual = repository.save(new Store(null, "new store", "http://host/new_store"));
         assertThat(actual.getName()).isEqualTo("new store");
         assertThat(repository.findByName("new store")).contains(actual);
     }

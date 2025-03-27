@@ -3,3 +3,5 @@ spring:
     url: jdbc:postgresql://localhost:5432/chronobidule
     username: postgres
     password: postgres
+#  jpa:
+#    show-sql: true
