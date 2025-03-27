@@ -1,11 +1,26 @@
 services:
-  db:
-    container_name: chronobidule-db
+  central-db:
+    container_name: chronobidule-central-db
     image: postgres:17.4-alpine
     ports:
       - '5432:5432'
     environment:
       POSTGRES_DB: chronobidule
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 1s
+      retries: 5
+
+  store-db:
+    container_name: chronobidule-store-db
+    image: postgres:17.4-alpine
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_DB: chronobidule-store
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     healthcheck:

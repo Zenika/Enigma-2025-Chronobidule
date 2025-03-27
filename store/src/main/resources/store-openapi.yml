@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Chronobidule Stores
+  version: 1.0.0
+tags:
+  - name: Stock
+    description: Provides endpoints to manage stock.
+paths:
+  /store/stock:
+    get:
+      tags:
+        - Stock
+      summary: Gets the current stock of the store
+      operationId: getStock
+      responses:
+        '200':
+          $ref: '#/components/responses/Stock'
+    post:
+      tags:
+        - Stock
+      summary: Initializes the stock of the store
+      operationId: initStock
+      requestBody:
+        $ref: '#/components/requestBodies/InitStock'
+      responses:
+        '201':
+          $ref: '#/components/responses/Stock'
+components:
+  requestBodies:
+    InitStock:
+      required: true
+      description: The stock to initialize the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Stock'
+  responses:
+    Stock:
+      description: The current stock of the store.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Stock'
+  schemas:
+    Stock:
+      type: object
+      required:
+        - stock
+      properties:
+        stock:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/ProductStock'
+    ProductStock:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          description: The product ID.
+          type: number
+          example: 123
+        productName:
+          description: The product name.
+          type: string
+          example: Westmalle Trappist Tripel
+        quantity:
+          description: The quantity of the product in the stock.
+          type: number
+          example: 1000
+
