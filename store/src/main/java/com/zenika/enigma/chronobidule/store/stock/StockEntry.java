@@ -12,15 +12,15 @@ import java.util.Objects;
 public class StockEntry {
     @Id
     private long productId;
-    private String productName;
+    private String name;
     private int quantity;
 
     private StockEntry() {
     }
 
-    public StockEntry(long productId, String productName, int quantity) {
+    public StockEntry(long productId, String name, int quantity) {
         this.productId = productId;
-        this.productName = productName;
+        this.name = name;
         this.quantity = quantity;
     }
 
@@ -28,8 +28,8 @@ public class StockEntry {
         return productId;
     }
 
-    public String getProductName() {
-        return productName;
+    public String getName() {
+        return name;
     }
 
     public int getQuantity() {
@@ -40,19 +40,19 @@ public class StockEntry {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         StockEntry that = (StockEntry) o;
-        return productId == that.productId && quantity == that.quantity && Objects.equals(productName, that.productName);
+        return productId == that.productId && quantity == that.quantity && Objects.equals(name, that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productId, productName, quantity);
+        return Objects.hash(productId, name, quantity);
     }
 
     @Override
     public String toString() {
         return "StockEntry{" +
                 "productId=" + productId +
-                ", productName='" + productName + '\'' +
+                ", name='" + name + '\'' +
                 ", quantity=" + quantity +
                 '}';
     }

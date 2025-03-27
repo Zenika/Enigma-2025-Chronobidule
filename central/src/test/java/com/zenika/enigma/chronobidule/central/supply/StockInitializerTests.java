@@ -8,23 +8,30 @@ import com.zenika.enigma.chronobidule.central.stores.StoreRegistered;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
+import static org.mockito.Mockito.verify;
 
+@ExtendWith(MockitoExtension.class)
 @DisplayName("Stock initializer should")
 class StockInitializerTests {
 
     private StockRepository stockRepository;
     private StockInitializer stockInitializer;
+    @Mock
+    private StoreStockFacade storeStockFacade;
 
     @BeforeEach
     void setUp() {
         var productsRepository = new InMemoryProductsRepository();
         stockRepository = new InMemoryStockRepository();
-        stockInitializer = new StockInitializer(stockRepository, productsRepository);
+        stockInitializer = new StockInitializer(stockRepository, productsRepository, storeStockFacade);
 
         productsRepository.save(new Product(1L, "product 1"));
         productsRepository.save(new Product(2L, "product 2"));
@@ -40,6 +47,7 @@ class StockInitializerTests {
         assertThat(stockRepository.findByStoreId(123L)).isNotEmpty().allMatch(
                 stockEntry -> stockEntry.getQuantity() > 0
         );
+        verify(storeStockFacade).sendStockToStore(store, stockRepository.findByStoreId(store.getId()));
     }
 
 }

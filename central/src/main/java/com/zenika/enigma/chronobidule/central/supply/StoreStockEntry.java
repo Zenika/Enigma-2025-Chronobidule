@@ -3,10 +3,7 @@ package com.zenika.enigma.chronobidule.central.supply;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.zenika.enigma.chronobidule.central.products.Product;
 import com.zenika.enigma.chronobidule.central.stores.Store;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.Objects;
 
@@ -22,10 +19,12 @@ public class StoreStockEntry {
     private Long id;
     private long storeId;
     private long productId;
+    @Transient
+    private String productName;
     private int quantity;
 
     public static StoreStockEntry of(Store store, Product product, int quantity) {
-        return new StoreStockEntry(null, store.getId(), product.getId(), quantity);
+        return new StoreStockEntry(null, store.getId(), product.getId(), product.getName(), quantity);
     }
 
     private StoreStockEntry() {
@@ -35,6 +34,14 @@ public class StoreStockEntry {
         this.id = id;
         this.storeId = storeId;
         this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    private StoreStockEntry(Long id, long storeId, long productId, String productName, int quantity) {
+        this.id = id;
+        this.storeId = storeId;
+        this.productId = productId;
+        this.productName = productName;
         this.quantity = quantity;
     }
 
@@ -48,6 +55,10 @@ public class StoreStockEntry {
 
     public long getProductId() {
         return productId;
+    }
+
+    public String getProductName() {
+        return productName;
     }
 
     public int getQuantity() {

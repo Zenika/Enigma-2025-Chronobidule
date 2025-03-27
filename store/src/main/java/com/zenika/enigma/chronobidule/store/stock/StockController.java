@@ -1,12 +1,13 @@
 package com.zenika.enigma.chronobidule.store.stock;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/store/stock")
@@ -18,9 +19,8 @@ class StockController {
         this.service = service;
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    StockInitializationResponse initStock(StockInitializationRequest request) {
+    @PostMapping(consumes = APPLICATION_JSON_VALUE)
+    StockInitializationResponse initStock(@RequestBody StockInitializationRequest request) {
         var stock = request.convert();
         service.initStock(stock);
         return StockInitializationResponse.from(stock);
@@ -42,7 +42,7 @@ class StockController {
 
     record ProductStock(long productId, String productName, int quantity) {
         static ProductStock from(StockEntry stockEntry) {
-            return new ProductStock(stockEntry.getProductId(), stockEntry.getProductName(), stockEntry.getQuantity());
+            return new ProductStock(stockEntry.getProductId(), stockEntry.getName(), stockEntry.getQuantity());
         }
 
         StockEntry convert() {
