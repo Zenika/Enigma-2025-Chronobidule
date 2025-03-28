@@ -1,7 +1,6 @@
 package com.zenika.enigma.chronobidule.central.prices;
 
 import com.zenika.enigma.chronobidule.central.stores.Store;
-import com.zenika.enigma.chronobidule.central.stores.StoreRegistered;
 import com.zenika.enigma.chronobidule.central.stores.StoreStatus;
 import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
 import com.zenika.enigma.chronobidule.central.supply.StockInitialized;
@@ -16,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,15 +35,19 @@ class PricesInitalizerTests {
     private StoresRepository storesRepository;
     @Mock
     private StorePriceFacade storePriceFacade;
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
     private PricesInitializer pricesInitializer;
 
     @Captor
     private ArgumentCaptor<Store> storeCaptor;
+    @Captor
+    private ArgumentCaptor<PricesInitialized> eventCaptor;
 
     @BeforeEach
     void setUp() {
         pricesRepository = new InMemoryPricesRepository();
-        pricesInitializer = new PricesInitializer(pricesRepository, storesRepository, storePriceFacade);
+        pricesInitializer = new PricesInitializer(pricesRepository, storesRepository, storePriceFacade, eventPublisher);
     }
 
     @Test
@@ -81,6 +85,22 @@ class PricesInitalizerTests {
 
         verifyNoInteractions(storePriceFacade);
         verifyNoInteractions(storesRepository);
+    }
+
+    @ParameterizedTest
+    @EnumSource(StoreStatus.class)
+    @DisplayName("publish event whatever the store status")
+    void publishEventPricesInitialized(StoreStatus status) {
+        var store = new Store(123L, "test store", "http://host/test", status);
+        var stock = List.of(
+                new StoreStockEntry(1000L, 123L, 1L, 111),
+                new StoreStockEntry(2000L, 123L, 2L, 222)
+        );
+        pricesInitializer.onStockInitialized(new StockInitialized(store, stock));
+
+        verify(eventPublisher).publishEvent(eventCaptor.capture());
+        var event = eventCaptor.getValue();
+        assertThat(event.store()).isEqualTo(store);
     }
 
 }

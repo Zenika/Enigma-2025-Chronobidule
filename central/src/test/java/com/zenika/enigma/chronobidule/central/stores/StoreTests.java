@@ -65,4 +65,21 @@ class StoreTests {
         assertThrows(IllegalStateException.class, store::pricesInitialized);
     }
 
+    @Test
+    @DisplayName("allow moving to ready from prices initialized status")
+    void moveToReady() {
+        var store = new Store(123L, "test store", "http://host/test", PRICES_INITIALIZED);
+        var actual = store.revenueInitialized();
+        assertThat(actual).isSameAs(store);
+        assertThat(actual.getStatus()).isEqualTo(READY);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StoreStatus.class, mode = EnumSource.Mode.EXCLUDE, names = "PRICES_INITIALIZED")
+    @DisplayName("refuse moving to ready from status different than prices initialized")
+    void refuseMovingToReady(StoreStatus current) {
+        var store = new Store(123L, "test store", "http://host/test", current);
+        assertThrows(IllegalStateException.class, store::revenueInitialized);
+    }
+
 }

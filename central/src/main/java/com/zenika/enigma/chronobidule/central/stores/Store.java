@@ -58,6 +58,14 @@ public class Store {
         return this;
     }
 
+    public Store revenueInitialized() {
+        if (!status.equals(PRICES_INITIALIZED)) {
+            throw new IllegalStateException("Cannot move to ready, current status is " + status);
+        }
+        status = READY;
+        return this;
+    }
+
     public Long getId() {
         return id;
     }
@@ -95,5 +103,4 @@ public class Store {
                 ", status=" + status +
                 '}';
     }
-
 }

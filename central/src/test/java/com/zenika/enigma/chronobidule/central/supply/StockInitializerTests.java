@@ -95,8 +95,8 @@ class StockInitializerTests {
 
     @ParameterizedTest
     @EnumSource(value = StoreStatus.class, mode = EnumSource.Mode.EXCLUDE, names = "REGISTERED")
-    @DisplayName("not publish event if store status is not REGISTERED")
-    void ignoreEventPublication(StoreStatus status) {
+    @DisplayName("publish event even if store status is not REGISTERED")
+    void publishEventStockInitializedStoreAlreadyRegistered(StoreStatus status) {
         var stock = List.of(
                 new StoreStockEntry(1000L, 123L, 1L, 111),
                 new StoreStockEntry(2000L, 123L, 2L, 222)
