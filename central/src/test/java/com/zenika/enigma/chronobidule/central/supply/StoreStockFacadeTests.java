@@ -45,7 +45,6 @@ class StoreStockFacadeTests {
         );
 
         var response = new ObjectMapper().writeValueAsString(new Response(stock));
-        System.out.println(response);
         mockServer.expect(requestTo("http://test-store.chronobidule.com/api/store/stock"))
                 .andExpect(method(POST))
                 .andExpect(content().contentType(APPLICATION_JSON))
@@ -61,6 +60,7 @@ class StoreStockFacadeTests {
                 .andRespond(withStatus(HttpStatus.OK).body(response).contentType(APPLICATION_JSON));
 
         facade.sendStockToStore(store, stock);
+        mockServer.verify();
     }
 
     private record Response(List<StoreStockEntry> stock) {

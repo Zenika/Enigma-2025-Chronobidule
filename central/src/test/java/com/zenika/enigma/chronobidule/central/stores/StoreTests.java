@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
-import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.REGISTERED;
-import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.STOCK_INITIALIZED;
+import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -41,13 +40,29 @@ class StoreTests {
         assertThat(actual.getStatus()).isEqualTo(STOCK_INITIALIZED);
     }
 
-
     @ParameterizedTest
     @EnumSource(value = StoreStatus.class, mode = EnumSource.Mode.EXCLUDE, names = "REGISTERED")
     @DisplayName("refuse moving to stock initialized from status different than registered")
     void refuseMovingToStockInitialized(StoreStatus current) {
         var store = new Store(123L, "test store", "http://host/test", current);
         assertThrows(IllegalStateException.class, store::stockInitialized);
+    }
+
+    @Test
+    @DisplayName("allow moving to prices initialized from stock initialized status")
+    void moveToPricesInitialized() {
+        var store = new Store(123L, "test store", "http://host/test", STOCK_INITIALIZED);
+        var actual = store.pricesInitialized();
+        assertThat(actual).isSameAs(store);
+        assertThat(actual.getStatus()).isEqualTo(PRICES_INITIALIZED);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = StoreStatus.class, mode = EnumSource.Mode.EXCLUDE, names = "STOCK_INITIALIZED")
+    @DisplayName("refuse moving to prices initialized from status different than stock initialized")
+    void refuseMovingToPricesInitialized(StoreStatus current) {
+        var store = new Store(123L, "test store", "http://host/test", current);
+        assertThrows(IllegalStateException.class, store::pricesInitialized);
     }
 
 }

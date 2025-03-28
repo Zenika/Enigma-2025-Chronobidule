@@ -12,7 +12,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "store_stock_entries")
-@JsonAutoDetect(fieldVisibility = ANY)
 public class StoreStockEntry {
     @Id
     @GeneratedValue(strategy = IDENTITY)

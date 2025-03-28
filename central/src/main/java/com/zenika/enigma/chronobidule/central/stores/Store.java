@@ -7,8 +7,7 @@ import org.springframework.util.Assert;
 import java.util.Objects;
 
 import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
-import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.REGISTERED;
-import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.STOCK_INITIALIZED;
+import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.*;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -51,6 +50,14 @@ public class Store {
         return this;
     }
 
+    public Store pricesInitialized() {
+        if (!status.equals(STOCK_INITIALIZED)) {
+            throw new IllegalStateException("Cannot move to prices initialized, current status is " + status);
+        }
+        status = PRICES_INITIALIZED;
+        return this;
+    }
+
     public Long getId() {
         return id;
     }
@@ -88,4 +95,5 @@ public class Store {
                 ", status=" + status +
                 '}';
     }
+
 }

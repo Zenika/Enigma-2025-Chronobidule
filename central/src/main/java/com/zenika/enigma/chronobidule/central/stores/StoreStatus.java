@@ -4,7 +4,7 @@ public enum StoreStatus {
 
     REGISTERED,
     STOCK_INITIALIZED,
-    PRICE_INITIALIZED,
+    PRICES_INITIALIZED,
     READY;
 
 }

@@ -5,6 +5,8 @@ info:
 tags:
   - name: Stock
     description: Provides endpoints to manage stock.
+  - name: Prices
+    description: Provides endpoints to manage prices.
 paths:
   /store/stock:
     get:
@@ -25,6 +27,25 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/Stock'
+  /store/prices:
+    get:
+      tags:
+        - Prices
+      summary: Gets the current prices of the store
+      operationId: getPrices
+      responses:
+        '200':
+          $ref: '#/components/responses/Prices'
+    post:
+      tags:
+        - Prices
+      summary: Initializes the prices of the store
+      operationId: initPrices
+      requestBody:
+        $ref: '#/components/requestBodies/InitPrices'
+      responses:
+        '201':
+          $ref: '#/components/responses/Prices'
 components:
   requestBodies:
     InitStock:
@@ -34,6 +55,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Stock'
+    InitPrices:
+      required: true
+      description: The prices to initialize the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Prices'
   responses:
     Stock:
       description: The current stock of the store.
@@ -41,6 +69,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Stock'
+    Prices:
+      description: The current prices of the store
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Prices'
   schemas:
     Stock:
       type: object
@@ -49,18 +83,18 @@ components:
       properties:
         stock:
           type: array
-          readOnly: true
           items:
             $ref: '#/components/schemas/ProductStock'
     ProductStock:
       type: object
       required:
         - productId
+        - productName
         - quantity
       properties:
         productId:
           description: The product ID.
-          type: number
+          type: integer
           example: 123
         productName:
           description: The product name.
@@ -68,6 +102,30 @@ components:
           example: Westmalle Trappist Tripel
         quantity:
           description: The quantity of the product in the stock.
-          type: number
+          type: integer
           example: 1000
+    Prices:
+      type: object
+      required:
+        - prices
+      properties:
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductPrice'
+    ProductPrice:
+      type: object
+      required:
+        - productId
+        - amount
+      properties:
+        productId:
+          description: The product ID.
+          type: integer
+          example: 123
+        amount:
+          description: The product price amount.
+          type: number
+          format: double
+          example: 34.5
 

@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS prices (
+    product_id BIGINT PRIMARY KEY,
+    amount DECIMAL NOT NULL
+);
