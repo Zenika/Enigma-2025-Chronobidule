@@ -1,9 +1,6 @@
 package com.zenika.enigma.chronobidule.store.stock;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -19,11 +16,17 @@ class StockController {
         this.service = service;
     }
 
-    @PostMapping(consumes = APPLICATION_JSON_VALUE)
-    StockInitializationResponse initStock(@RequestBody StockInitializationRequest request) {
+    @GetMapping(produces = APPLICATION_JSON_VALUE)
+    StockResponse getStock() {
+        var stock = service.getStock();
+        return StockResponse.from(stock);
+    }
+
+    @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    StockResponse initStock(@RequestBody StockInitializationRequest request) {
         var stock = request.convert();
         service.initStock(stock);
-        return StockInitializationResponse.from(stock);
+        return StockResponse.from(stock);
     }
 
     record StockInitializationRequest(List<ProductStock> stock) {
@@ -34,9 +37,9 @@ class StockController {
         }
     }
 
-    record StockInitializationResponse(List<ProductStock> stocks) {
-        static StockInitializationResponse from(List<StockEntry> stockEntries) {
-            return new StockInitializationResponse(stockEntries.stream().map(ProductStock::from).toList());
+    record StockResponse(List<ProductStock> stocks) {
+        static StockResponse from(List<StockEntry> stockEntries) {
+            return new StockResponse(stockEntries.stream().map(ProductStock::from).toList());
         }
     }
 

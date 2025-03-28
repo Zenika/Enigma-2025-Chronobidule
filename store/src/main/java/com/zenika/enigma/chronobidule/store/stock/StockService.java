@@ -15,8 +15,11 @@ class StockService {
         this.repository = repository;
     }
 
+    public List<StockEntry> getStock() {
+        return repository.findAll();
+    }
+
     public void initStock(List<StockEntry> stock) {
         repository.saveAll(stock);
     }
-
 }
