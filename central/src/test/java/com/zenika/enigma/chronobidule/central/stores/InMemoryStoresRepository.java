@@ -16,6 +16,11 @@ class InMemoryStoresRepository implements StoresRepository {
     }
 
     @Override
+    public Optional<Store> findById(long id) {
+        return Optional.ofNullable(stores.get(id));
+    }
+
+    @Override
     public Optional<Store> findByName(String name) {
         Assert.notNull(name, "Cannot find store with null name");
         return findAll().stream()

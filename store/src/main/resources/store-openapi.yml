@@ -7,6 +7,8 @@ tags:
     description: Provides endpoints to manage stock.
   - name: Prices
     description: Provides endpoints to manage prices.
+  - name: Orders
+    description: Provides endpoints to manage orders.
 paths:
   /store/stock:
     get:
@@ -46,7 +48,38 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/Prices'
+  /store/orders:
+    post:
+      tags:
+        - Orders
+      summary: Places a new order, verifying the available quantities.
+      operationId: placeOrder
+      requestBody:
+        $ref: '#/components/requestBodies/PlaceOrder'
+      responses:
+        '201':
+          $ref: '#/components/responses/Order'
+  /store/orders/{orderId}/payments:
+    post:
+      tags:
+        - Orders
+      summary: Creates a payment for a placed order, providing the total amount of the payment
+      operationId: payOrder
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        '201':
+          $ref: '#/components/responses/Payment'
 components:
+  parameters:
+    OrderId:
+      name: orderId
+      description: Order ID.
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 1000
   requestBodies:
     InitStock:
       required: true
@@ -62,6 +95,13 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Prices'
+    PlaceOrder:
+      required: true
+      description: The order to place
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Order'
   responses:
     Stock:
       description: The current stock of the store.
@@ -75,6 +115,18 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Prices'
+    Order:
+      description: The placed order.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Order'
+    Payment:
+      description: The payment of an order.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Payment'
   schemas:
     Stock:
       type: object
@@ -128,4 +180,42 @@ components:
           type: number
           format: double
           example: 34.5
-
+    Order:
+      type: object
+      required:
+        - id
+        - items
+      properties:
+        id:
+          description: The order ID.
+          type: integer
+          example: 1000
+        items:
+          description: The order items.
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+    OrderItem:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          description: The product ID.
+          type: integer
+          example: 123
+        quantity:
+          description: The quantity of the product.
+          type: integer
+          example: 10
+    Payment:
+      type: object
+      required:
+        - totalAmount
+      properties:
+        totalAmount:
+          description: The total amount to pay for the order.
+          type: number
+          format: double
+          example: 765.43

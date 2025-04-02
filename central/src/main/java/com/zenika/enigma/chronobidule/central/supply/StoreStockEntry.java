@@ -1,13 +1,11 @@
 package com.zenika.enigma.chronobidule.central.supply;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.zenika.enigma.chronobidule.central.products.Product;
 import com.zenika.enigma.chronobidule.central.stores.Store;
 import jakarta.persistence.*;
 
 import java.util.Objects;
 
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -44,6 +42,15 @@ public class StoreStockEntry {
         this.quantity = quantity;
     }
 
+    public boolean hasStock() {
+        return quantity > 0;
+    }
+
+    public StoreStockEntry decreaseQuantity(int quantity) {
+        this.quantity -= quantity;
+        return this;
+    }
+
     public Long getId() {
         return id;
     }
@@ -78,7 +85,7 @@ public class StoreStockEntry {
 
     @Override
     public String toString() {
-        return "StoreStockEntry{" +
+        return "{" +
                 "id=" + id +
                 ", storeId=" + storeId +
                 ", productId=" + productId +

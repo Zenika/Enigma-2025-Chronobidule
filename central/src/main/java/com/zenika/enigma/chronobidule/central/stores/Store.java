@@ -1,18 +1,15 @@
 package com.zenika.enigma.chronobidule.central.stores;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import jakarta.persistence.*;
 import org.springframework.util.Assert;
 
 import java.util.Objects;
 
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
 import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.*;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "stores")
-@JsonAutoDetect(fieldVisibility = ANY)
 public class Store {
     @Id
     @GeneratedValue(strategy = IDENTITY)

@@ -1,9 +1,6 @@
 package com.zenika.enigma.chronobidule.central.supply;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 class InMemoryStockRepository implements StockRepository {
@@ -48,5 +45,14 @@ class InMemoryStockRepository implements StockRepository {
         }
         stockEntries.put(stockEntryToSave.getId(), stockEntryToSave);
         return stockEntryToSave;
+    }
+
+    @Override
+    public <S extends StoreStockEntry> List<S> saveAll(Iterable<S> stockEntries) {
+        var savedEntries = new ArrayList<S>();
+        for (var stockEntry : stockEntries) {
+            savedEntries.add((S) save(stockEntry));
+        }
+        return savedEntries;
     }
 }
