@@ -1,0 +1,32 @@
+@startuml
+
+actor "Client" as client
+
+rectangle "Central system" as central_system{
+    database "Central\ndatabase" as central_db
+    component "Central\nserver" as central_server
+
+    central_server-->central_db
+
+    client -> central_server: Passe une commande
+}
+note top of central_server
+    Ce code est écrit par l'équipe centrale de Chronobidule
+end note
+
+
+rectangle "Store system" as store_system {
+    database "Store\ndatabase" as store_db
+    component "Store\nserver" as store_server
+
+    store_server-->store_db
+}
+
+note top of store_server
+    Ce code est écrit par l'équipe centrale de Chronobidule
+end note
+
+central_server -> store_server: Envoie la commande aux magasins
+central_server <- store_server: Envoie le prix calculé pour\ncette commande dans ce magasin
+
+@enduml
