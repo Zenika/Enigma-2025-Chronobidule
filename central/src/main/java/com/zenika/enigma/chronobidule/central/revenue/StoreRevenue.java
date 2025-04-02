@@ -27,6 +27,10 @@ public class StoreRevenue {
         this.total = total;
     }
 
+    public void increase(BigDecimal paymentAmount) {
+        total = total.add(paymentAmount);
+    }
+
     public Long getStoreId() {
         return storeId;
     }

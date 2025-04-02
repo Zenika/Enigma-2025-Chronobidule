@@ -7,6 +7,8 @@ public interface StoresRepository {
 
     Collection<Store> findAll();
 
+    Optional<Store> findById(long id);
+
     Optional<Store> findByName(String name);
 
     <S extends Store> Store save(S store);
