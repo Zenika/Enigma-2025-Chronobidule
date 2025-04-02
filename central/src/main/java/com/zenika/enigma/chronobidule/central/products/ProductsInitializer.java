@@ -24,7 +24,7 @@ public class ProductsInitializer {
     @EventListener
     public void initializeProducts(ApplicationReadyEvent ready) {
         if (repository.findAll().isEmpty()) {
-            var faker = new Faker();
+            var faker = new Faker(new Locale("fr"));
             initializeProducts(() -> faker.beer().name(), 20);
             initializeProducts(() -> faker.food().dish(), 30);
             initializeProducts(() -> faker.food().vegetable(), 30);
