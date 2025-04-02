@@ -1,0 +1,24 @@
+@startuml
+actor "Client" as client
+boundary "Central\nserver" as central_server
+boundary "Store\nserver" as store_server
+
+== Initialisation ==
+
+store_server -> central_server: Enregistrement du magasin
+
+== Processus en tâche de fond ==
+
+central_server -> store_server: Envoi du stock
+central_server -> store_server: Envoi des prix des produits
+
+
+== Passage de commande ==
+
+client -> central_server: Passe une commande
+activate central_server
+central_server->store_server: Transfère la commande aux différents magasins
+activate store_server
+return Prix total de la commande
+
+@enduml
