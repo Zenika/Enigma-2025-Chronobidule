@@ -5,3 +5,8 @@ spring:
     password: postgres
 #  jpa:
 #    show-sql: true
+springdoc:
+#  api-docs:
+#    enabled: false
+  swagger-ui:
+    url: /openapi.yml
