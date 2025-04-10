@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html th:replace="~{layoutFile :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Stores list</title>
+</head>
+
+<body>
+    <section>
+        <table class="table table-responsive">
+            <thead class="sticky-top">
+                <tr>
+                    <th scope="col">Store name</th>
+                    <th scope="col">Store url</th>
+                    <th scope="col">Store status</th>
+                </tr>
+            </thead>
+            <tr th:each="store: ${stores}"
+                th:class="${store.statusStyle}">
+                <th scope="row" th:text="${store.name}" />
+                <td><a th:href="${store.baseUrl}" th:text="${store.baseUrl}" /></td>
+                <td th:text="${store.status}" />
+            </tr>
+        </table>
+    </section>
+</body>
+
+</html>

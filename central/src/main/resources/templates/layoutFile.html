@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en"  th:fragment="layout (title, content)" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.1.1/dist/css/tabler.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ractive"></script>
+
+    <title th:replace="${title}">Layout Title</title>
+</head>
+
+<body>
+    <div class="page">
+        <header class="navbar navbar-expand-md d-print-none">
+            <div class="container-xl">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="table">Stores list</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="leaderboard">Stores leaderboard</a>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <div class="page-wrapper">
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="row row-deck row-cards">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body" style="height: 10rem" th:replace="${content}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.1.1/dist/js/tabler.min.js"></script>
+</body>
+
+</html>
