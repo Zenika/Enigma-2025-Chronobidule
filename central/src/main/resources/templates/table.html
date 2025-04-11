@@ -7,12 +7,15 @@
 
 <body>
     <section>
-        <table class="table table-responsive">
+        <table class="table table-responsive" 
+            th:fragment="storesTable(stores)"
+            hx-get="/dashboard/table/htmx" hx-trigger="every 1s">
             <thead class="sticky-top">
                 <tr>
                     <th scope="col">Store name</th>
                     <th scope="col">Store url</th>
                     <th scope="col">Store status</th>
+                    <th scope="col">Store revenue</th>
                 </tr>
             </thead>
             <tr th:each="store: ${stores}"
@@ -20,6 +23,7 @@
                 <th scope="row" th:text="${store.name}" />
                 <td><a th:href="${store.baseUrl}" th:text="${store.baseUrl}" /></td>
                 <td th:text="${store.status}" />
+                <td th:text="${store.revenue}" />
             </tr>
         </table>
     </section>

@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.1.1/dist/css/tabler.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/ractive"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.js" integrity="sha384-qbtR4rS9RrUMECUWDWM2+YGgN3U4V4ZncZ0BvUcg9FGct0jqXz3PUdVpU1p0yrXS" crossorigin="anonymous"></script>
 
     <title th:replace="${title}">Layout Title</title>
 </head>
@@ -22,6 +22,12 @@
                         <a class="nav-link" href="leaderboard">Stores leaderboard</a>
                     </li>
                 </ul>
+                <div class="navbar-nav flex-row order-md-last ms-auto">
+                    <div class="nav-item dropdown">
+                    Central server address 
+                    <b th:text="${ipAddress}">no central server address</b>
+                    </div>
+                </div>
             </div>
         </header>
 
