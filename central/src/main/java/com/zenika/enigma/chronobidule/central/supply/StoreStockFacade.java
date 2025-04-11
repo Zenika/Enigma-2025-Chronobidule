@@ -1,16 +1,20 @@
 package com.zenika.enigma.chronobidule.central.supply;
 
-import com.zenika.enigma.chronobidule.central.stores.Store;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 import java.util.Collection;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+import com.zenika.enigma.chronobidule.central.stores.Store;
+import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
 
 @Component
 public class StoreStockFacade {
 
+	@Autowired StoresRepository storesRepository;
     private final RestClient.Builder restClientBuilder;
 
     public StoreStockFacade(RestClient.Builder restClientBuilder) {
@@ -25,6 +29,7 @@ public class StoreStockFacade {
                 .body(StoreStockInteraction.from(storeStock))
                 .retrieve()
                 .toEntity(StoreStockInteraction.class);
+        storesRepository.save(store.stockInitialized());
     }
 
     private record StoreStockInteraction(Collection<ProductStock> stock) {

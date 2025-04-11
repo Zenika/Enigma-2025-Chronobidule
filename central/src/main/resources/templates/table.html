@@ -20,7 +20,7 @@
             </thead>
             <tr th:each="store: ${stores}"
                 th:class="${store.statusStyle}">
-                <th scope="row" th:text="${store.name}" />
+                <th scope="row"><a th:href="@{/dashboard/{storeid}/details(storeid = ${store.id})}" th:text="${store.name}" /></th>
                 <td><a th:href="${store.baseUrl}" th:text="${store.baseUrl}" /></td>
                 <td th:text="${store.status}" />
                 <td th:text="${store.revenue}" />

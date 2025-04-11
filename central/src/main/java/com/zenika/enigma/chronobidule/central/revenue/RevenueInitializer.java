@@ -1,16 +1,17 @@
 package com.zenika.enigma.chronobidule.central.revenue;
 
-import com.zenika.enigma.chronobidule.central.prices.PricesInitialized;
-import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
+import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.PRICES_INITIALIZED;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
 
-import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.PRICES_INITIALIZED;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+import com.zenika.enigma.chronobidule.central.prices.PricesInitialized;
+import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
 
 @Component
 public class RevenueInitializer {
@@ -26,7 +27,7 @@ public class RevenueInitializer {
     }
 
     @Async
-    @TransactionalEventListener
+    @EventListener
     @Transactional(propagation = REQUIRES_NEW)
     public void onPricesInitialized(PricesInitialized event) {
         if (!event.store().getStatus().equals(PRICES_INITIALIZED)) {

@@ -59,7 +59,6 @@ public class StockInitializer {
             LOGGER.info("Initialize stock for store {}", store);
             storeStock = generateStock(store);
             storeStockFacade.sendStockToStore(store, storeStock);
-            storesRepository.save(store.stockInitialized());
         }
         eventPublisher.publishEvent(new StockInitialized(store, storeStock));
 	}

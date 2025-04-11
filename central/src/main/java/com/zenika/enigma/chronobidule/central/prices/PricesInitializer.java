@@ -27,13 +27,11 @@ public class PricesInitializer {
     private final PricesRepository repository;
     private final StoresRepository storesRepository;
     private final StorePriceFacade storePriceFacade;
-    private final ApplicationEventPublisher eventPublisher;
 
-    public PricesInitializer(PricesRepository repository, StoresRepository storesRepository, StorePriceFacade storePriceFacade, ApplicationEventPublisher eventPublisher) {
+    public PricesInitializer(PricesRepository repository, StoresRepository storesRepository, StorePriceFacade storePriceFacade) {
         this.repository = repository;
         this.storesRepository = storesRepository;
         this.storePriceFacade = storePriceFacade;
-        this.eventPublisher = eventPublisher;
     }
 
     @Async
@@ -52,9 +50,7 @@ public class PricesInitializer {
             LOGGER.info("Initialize prices for store {}", store);
 			var prices = generatePrices(store, stock);
             storePriceFacade.sendPricesToStore(store, prices);
-            storesRepository.save(store.pricesInitialized());
         }
-        eventPublisher.publishEvent(new PricesInitialized(store));
 	}
 
     private Collection<StoreProductPrice> generatePrices(Store store, Collection<StoreStockEntry> stock) {

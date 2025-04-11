@@ -3,6 +3,7 @@ package com.zenika.enigma.chronobidule.central.orders;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,7 @@ public class ClientSimulation {
     @Scheduled(fixedRate = 10, initialDelay = 10, timeUnit = SECONDS)
     public void placeOrders() {
         var stores = storesRepository.findAll();
+        LOGGER.info("Sending orders to {}", stores.stream().map(Store::getName).collect(Collectors.joining(",")));
         stores.stream()
                 .map(this::placeOrder)
                 .flatMap(Optional::stream)
@@ -62,14 +64,6 @@ public class ClientSimulation {
     private Optional<Order> placeOrder(Store store) {
         try {
             var stock = stockRepository.findByStoreId(store.getId());
-            if(stock.isEmpty()) {
-            	stockInitializer.generateStockForStore(store);
-                stock = stockRepository.findByStoreId(store.getId());
-            }
-            var prices = pricesRepository.findByStoreId(store.getId());
-            if(prices.isEmpty()) {
-            	pricesInitializer.generatePricesForStore(store, stock);
-            }
             var faker = new Faker();
             var items = stock.stream()
                     .filter(StoreStockEntry::hasStock)
@@ -78,14 +72,14 @@ public class ClientSimulation {
                             .numberBetween(1, Integer.min(10, stockEntry.getQuantity()))))
                     .toList();
             if (items.isEmpty()) {
-                LOGGER.warn("No order placed for store {}", store.getId());
+                LOGGER.warn("No order placed for store {} {]", store.getId(), store.getName());
                 return Optional.empty();
             }
             var order = Order.of(store, items);
             var placedOrder = ordersService.placeOrder(order);
             LOGGER.info("Placed order {}", placedOrder);
             return Optional.of(placedOrder);
-        } catch (OrderStoreException e) {
+        } catch (Exception e) {
             LOGGER.warn(e.getMessage());
             return Optional.empty();
         }
@@ -97,7 +91,7 @@ public class ClientSimulation {
             LOGGER.info("Paid {} euros for order {} in store {}", paidOrder.getPaymentAmount(), paidOrder.getId(), paidOrder.getStoreId());
             eventPublisher.publishEvent(new OrderPaid(order.getStoreId(), order.getId(), order.getPaymentAmount()));
             return Optional.of(paidOrder);
-        } catch (OrderStoreException e) {
+        } catch (Exception e) {
             LOGGER.warn(e.getMessage());
             return Optional.empty();
         }

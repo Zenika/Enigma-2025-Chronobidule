@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -41,5 +42,9 @@ public class StoresService {
         eventPublisher.publishEvent(new StoreRegistered(registeredStore));
         return registeredStore;
     }
+
+	public Optional<Store> findById(long id) {
+		return repository.findById(id);
+	}
 
 }

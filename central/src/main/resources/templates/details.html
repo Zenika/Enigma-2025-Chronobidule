@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html th:replace="~{layoutFile :: layout(~{::title}, ~{::section})}">
+
+<head>
+    <title>Stores list</title>
+</head>
+
+<body>
+    <section>
+        <h1 th:text="${name}"></h1>
+        <a th:href="@{/dashboard/{id}/send/stocks(id = ${id})}" class="btn btn-primary">Send back stock</a>
+        <a th:href="@{/dashboard/{id}/send/prices(id = ${id})}" class="btn btn-primary">Send back prices</a>
+        <table class="table table-responsive" 
+
+            >
+            <thead class="sticky-top">
+                <tr>
+                    <th scope="col">Product name name</th>
+                    <th scope="col">Product stock</th>
+                    <th scope="col">Product price</th>
+                </tr>
+            </thead>
+            <tr th:each="product: ${prices}">
+                <th scope="row" th:text="${product.name}"></th>
+                <th scope="row" th:text="${product.stock}"></th>
+                <th scope="row" th:text="${product.price}"></th>
+            </tr>
+
+        </table>
+
+    </section>
+</body>
+
+</html>
