@@ -46,18 +46,23 @@ public class StockInitializer {
     @TransactionalEventListener
     @Transactional(propagation = REQUIRES_NEW)
     public void onStoreRegistered(StoreRegistered event) {
-        Collection<StoreStockEntry> storeStock;
-        if (!event.store().getStatus().equals(StoreStatus.REGISTERED)) {
-            LOGGER.info("Ignore stock initialization for store {}", event.store());
-            storeStock = stockRepository.findByStoreId(event.store().getId());
-        } else {
-            LOGGER.info("Initialize stock for store {}", event.store());
-            storeStock = generateStock(event.store());
-            storeStockFacade.sendStockToStore(event.store(), storeStock);
-            storesRepository.save(event.store().stockInitialized());
-        }
-        eventPublisher.publishEvent(new StockInitialized(event.store(), storeStock));
+    	Store store = event.store();
+        generateStockForStore(store);
     }
+
+	public void generateStockForStore(Store store) {
+		Collection<StoreStockEntry> storeStock;
+		if (!store.getStatus().equals(StoreStatus.REGISTERED)) {
+            LOGGER.info("Ignore stock initialization for store {}", store);
+            storeStock = stockRepository.findByStoreId(store.getId());
+        } else {
+            LOGGER.info("Initialize stock for store {}", store);
+            storeStock = generateStock(store);
+            storeStockFacade.sendStockToStore(store, storeStock);
+            storesRepository.save(store.stockInitialized());
+        }
+        eventPublisher.publishEvent(new StockInitialized(store, storeStock));
+	}
 
     private Collection<StoreStockEntry> generateStock(Store store) {
         var faker = new Faker();

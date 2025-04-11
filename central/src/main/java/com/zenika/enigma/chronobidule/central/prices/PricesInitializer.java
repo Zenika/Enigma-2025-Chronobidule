@@ -1,6 +1,7 @@
 package com.zenika.enigma.chronobidule.central.prices;
 
 import com.github.javafaker.Faker;
+import com.zenika.enigma.chronobidule.central.stores.Store;
 import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
 import com.zenika.enigma.chronobidule.central.supply.StockInitialized;
 import com.zenika.enigma.chronobidule.central.supply.StoreStockEntry;
@@ -39,23 +40,29 @@ public class PricesInitializer {
     @TransactionalEventListener
     @Transactional(propagation = REQUIRES_NEW)
     public void onStockInitialized(StockInitialized event) {
-        if (!event.store().getStatus().equals(STOCK_INITIALIZED)) {
-            LOGGER.info("Ignore prices initialization for store {}", event.store());
-        } else {
-            LOGGER.info("Initialize prices for store {}", event.store());
-            var prices = generatePrices(event);
-            storePriceFacade.sendPricesToStore(event.store(), prices);
-            storesRepository.save(event.store().pricesInitialized());
-        }
-        eventPublisher.publishEvent(new PricesInitialized(event.store()));
+        Store store = event.store();
+        Collection<StoreStockEntry> stock = event.stock();
+		generatePricesForStore(store, stock);
     }
 
-    private Collection<StoreProductPrice> generatePrices(StockInitialized event) {
+	public void generatePricesForStore(Store store, Collection<StoreStockEntry> stock) {
+		if (!store.getStatus().equals(STOCK_INITIALIZED)) {
+            LOGGER.info("Ignore prices initialization for store {}", store);
+        } else {
+            LOGGER.info("Initialize prices for store {}", store);
+			var prices = generatePrices(store, stock);
+            storePriceFacade.sendPricesToStore(store, prices);
+            storesRepository.save(store.pricesInitialized());
+        }
+        eventPublisher.publishEvent(new PricesInitialized(store));
+	}
+
+    private Collection<StoreProductPrice> generatePrices(Store store, Collection<StoreStockEntry> stock) {
         var faker = new Faker();
-        return event.stock().stream()
+		return stock.stream()
                 .map(StoreStockEntry::getProductId)
                 .map(product -> StoreProductPrice.of(
-                        event.store(),
+                        store,
                         product,
                         BigDecimal.valueOf(faker.number().randomDouble(2, 1, 100))
                 ))

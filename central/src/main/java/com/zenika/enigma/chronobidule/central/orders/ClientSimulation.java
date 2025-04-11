@@ -1,19 +1,23 @@
 package com.zenika.enigma.chronobidule.central.orders;
 
-import com.github.javafaker.Faker;
-import com.zenika.enigma.chronobidule.central.stores.Store;
-import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
-import com.zenika.enigma.chronobidule.central.supply.StockRepository;
-import com.zenika.enigma.chronobidule.central.supply.StoreStockEntry;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-
-import static java.util.concurrent.TimeUnit.SECONDS;
+import com.github.javafaker.Faker;
+import com.zenika.enigma.chronobidule.central.prices.PricesInitializer;
+import com.zenika.enigma.chronobidule.central.prices.PricesRepository;
+import com.zenika.enigma.chronobidule.central.stores.Store;
+import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
+import com.zenika.enigma.chronobidule.central.supply.StockInitializer;
+import com.zenika.enigma.chronobidule.central.supply.StockRepository;
+import com.zenika.enigma.chronobidule.central.supply.StoreStockEntry;
 
 @Component
 public class ClientSimulation {
@@ -22,14 +26,26 @@ public class ClientSimulation {
 
     private final StoresRepository storesRepository;
     private final StockRepository stockRepository;
+    private final StockInitializer stockInitializer;
+    private final PricesRepository pricesRepository;
+    private final PricesInitializer pricesInitializer;
     private final OrdersService ordersService;
     private final ApplicationEventPublisher eventPublisher;
 
-    public ClientSimulation(StoresRepository storesRepository, StockRepository stockRepository, OrdersService ordersService, ApplicationEventPublisher eventPublisher) {
+    public ClientSimulation(StoresRepository storesRepository, 
+    		StockRepository stockRepository, 
+    		StockInitializer stockInitializer,
+    		PricesRepository pricesRepository, 
+    		PricesInitializer pricesInitializer,
+    		OrdersService ordersService, 
+    		ApplicationEventPublisher eventPublisher) {
         this.storesRepository = storesRepository;
-        this.stockRepository = stockRepository;
         this.ordersService = ordersService;
         this.eventPublisher = eventPublisher;
+        this.stockRepository = stockRepository;
+        this.stockInitializer = stockInitializer;
+        this.pricesRepository = pricesRepository;
+        this.pricesInitializer = pricesInitializer;
     }
 
     @Scheduled(fixedRate = 10, initialDelay = 10, timeUnit = SECONDS)
@@ -46,6 +62,14 @@ public class ClientSimulation {
     private Optional<Order> placeOrder(Store store) {
         try {
             var stock = stockRepository.findByStoreId(store.getId());
+            if(stock.isEmpty()) {
+            	stockInitializer.generateStockForStore(store);
+                stock = stockRepository.findByStoreId(store.getId());
+            }
+            var prices = pricesRepository.findByStoreId(store.getId());
+            if(prices.isEmpty()) {
+            	pricesInitializer.generatePricesForStore(store, stock);
+            }
             var faker = new Faker();
             var items = stock.stream()
                     .filter(StoreStockEntry::hasStock)

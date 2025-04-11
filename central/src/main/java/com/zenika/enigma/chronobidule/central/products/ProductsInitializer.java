@@ -1,15 +1,17 @@
 package com.zenika.enigma.chronobidule.central.products;
 
-import com.github.javafaker.Faker;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
+import com.github.javafaker.Faker;
 
 @Component
 public class ProductsInitializer {
