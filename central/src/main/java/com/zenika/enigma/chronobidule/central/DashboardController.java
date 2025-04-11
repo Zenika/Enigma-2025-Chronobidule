@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.NumberFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +38,9 @@ public class DashboardController {
 	private List<Map<String, Object>> getStoresRepresentations() {
 		List<Map<String, Object>> c = stores.getStores()
 			.stream()
+			.sorted(Comparator.comparing(Store::getName)
+					.thenComparing(Store::getStatus)
+					.thenComparing(Store::getId))
 			.map(this::storeToRepresentation)
 			.collect(Collectors.toList());
 		return c;
