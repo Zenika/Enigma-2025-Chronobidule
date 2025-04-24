@@ -1,11 +1,10 @@
 package com.zenika.enigma.chronobidule.central.supply;
 
-import com.github.javafaker.Faker;
-import com.zenika.enigma.chronobidule.central.products.ProductsRepository;
-import com.zenika.enigma.chronobidule.central.stores.Store;
-import com.zenika.enigma.chronobidule.central.stores.StoreRegistered;
-import com.zenika.enigma.chronobidule.central.stores.StoreStatus;
-import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
+import java.util.Collection;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,10 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.Collection;
-import java.util.List;
-
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+import com.github.javafaker.Faker;
+import com.zenika.enigma.chronobidule.central.products.ProductsRepository;
+import com.zenika.enigma.chronobidule.central.stores.Store;
+import com.zenika.enigma.chronobidule.central.stores.StoreRegistered;
+import com.zenika.enigma.chronobidule.central.stores.StoreStatus;
+import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
 
 @Component
 public class StockInitializer {
@@ -50,6 +51,7 @@ public class StockInitializer {
         generateStockForStore(store);
     }
 
+    @Transactional
 	public void generateStockForStore(Store store) {
 		Collection<StoreStockEntry> storeStock;
 		if (!store.getStatus().equals(StoreStatus.REGISTERED)) {
@@ -71,6 +73,7 @@ public class StockInitializer {
             storeStock = products.stream()
                     .filter(product -> faker.bool().bool())
                     .map(productWithStock -> StoreStockEntry.of(store, productWithStock, faker.number().numberBetween(1, 1000)))
+                    .filter(stockEntry -> stockRepository.findByStoreIdAndProductId(store.getId(), stockEntry.getProductId()).isEmpty())
                     .map(stockRepository::save)
                     .toList();
         }

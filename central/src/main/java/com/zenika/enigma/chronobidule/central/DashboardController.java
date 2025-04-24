@@ -44,13 +44,13 @@ public class DashboardController {
 	@Autowired PricesRepository pricesRepository;
 	@Autowired RevenueRepository revenues;
 	@Autowired InetAddress centralAddress;
+	@Autowired StockInitializer stockInitializer;
 	@Autowired StoreStockFacade storeStockFacade;
 	@Autowired StorePriceFacade storePriceFacade;
 	
 	@GetMapping @RequestMapping("{id}/send/stocks") public String sendStock(@PathVariable("id") Long id,  Model model) throws UnknownHostException {
 		stores.findById(id).ifPresent(store -> {
-			Collection<StoreStockEntry> stocks = stocksRepository.findByStoreId(id);
-			storeStockFacade.sendStockToStore(store, stocks);
+			stockInitializer.generateStockForStore(store);
 		});
 		return String.format("redirect:/dashboard/%s/details", id);
 	}

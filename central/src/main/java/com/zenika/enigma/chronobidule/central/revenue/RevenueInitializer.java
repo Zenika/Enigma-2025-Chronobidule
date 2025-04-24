@@ -5,10 +5,10 @@ import static org.springframework.transaction.annotation.Propagation.REQUIRES_NE
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import com.zenika.enigma.chronobidule.central.prices.PricesInitialized;
 import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
@@ -27,7 +27,7 @@ public class RevenueInitializer {
     }
 
     @Async
-    @EventListener
+    @TransactionalEventListener
     @Transactional(propagation = REQUIRES_NEW)
     public void onPricesInitialized(PricesInitialized event) {
         if (!event.store().getStatus().equals(PRICES_INITIALIZED)) {

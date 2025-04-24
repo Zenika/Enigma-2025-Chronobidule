@@ -1,23 +1,23 @@
 package com.zenika.enigma.chronobidule.central.prices;
 
-import com.github.javafaker.Faker;
-import com.zenika.enigma.chronobidule.central.stores.Store;
-import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
-import com.zenika.enigma.chronobidule.central.supply.StockInitialized;
-import com.zenika.enigma.chronobidule.central.supply.StoreStockEntry;
+import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.STOCK_INITIALIZED;
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+
+import java.math.BigDecimal;
+import java.util.Collection;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.math.BigDecimal;
-import java.util.Collection;
-
-import static com.zenika.enigma.chronobidule.central.stores.StoreStatus.STOCK_INITIALIZED;
-import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
+import com.github.javafaker.Faker;
+import com.zenika.enigma.chronobidule.central.stores.Store;
+import com.zenika.enigma.chronobidule.central.stores.StoresRepository;
+import com.zenika.enigma.chronobidule.central.supply.StockInitialized;
+import com.zenika.enigma.chronobidule.central.supply.StoreStockEntry;
 
 @Component
 public class PricesInitializer {
